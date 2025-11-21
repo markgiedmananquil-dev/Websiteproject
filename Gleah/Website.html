@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glee-Yah - Personal Website</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Poppins', sans-serif; background: var(--color-bg); color: var(--color-text-light); overflow-x: hidden; line-height: 1.6; }
+        :root {
+            --color-bg: #F5F0E8; --color-primary: #8B7355; --color-secondary: #A68870; --color-accent: #D4A574;
+            --color-light: #FFF9F0; --color-text-dark: #4A3F35; --color-text-light: #FFFFFF; --color-warm: #E8DCC8;
+            --gradient-primary: linear-gradient(135deg, #A68870 0%, #8B7355 100%);
+            --gradient-light: linear-gradient(135deg, #FFF9F0 0%, #F5F0E8 100%);
+            --shadow-sm: 0 2px 15px rgba(74, 63, 53, 0.08); --shadow-md: 0 8px 25px rgba(74, 63, 53, 0.12);
+            --shadow-lg: 0 15px 45px rgba(74, 63, 53, 0.15);
+        }
+        .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal-on-scroll.revealed { opacity: 1; transform: translateY(0); }
+
+        /* NAVIGATION - UPDATED FOR SMOOTH ENERGY TRANSITION */
+        nav { 
+            position: fixed; top: 0; left: 0; right: 0; 
+            background: rgba(255, 249, 240, 0.8); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+            padding: 15px 50px; 
+            display: none; justify-content: space-between; align-items: center; 
+            z-index: 1000; 
+            box-shadow: var(--shadow-sm); 
+            animation: slideDown 0.8s cubic-bezier(0.23, 1, 0.32, 1); 
+            border-bottom: 1px solid rgba(139, 115, 85, 0.1); 
+            transition: all 0.4s ease;
+        }
+        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        nav.active { display: flex; }
+        
+        .nav-brand { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: var(--color-primary); letter-spacing: 1.5px; z-index: 1002; }
+        
+        .nav-links { 
+            display: flex; gap: 5px; align-items: center; 
+            position: relative; /* Needed for the sliding indicator */
+            background: rgba(255, 255, 255, 0.5);
+            padding: 5px;
+            border-radius: 40px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        /* The Sliding Energy Pill */
+        .nav-indicator {
+            position: absolute;
+            height: 0; /* Set by JS */
+            width: 0;  /* Set by JS */
+            top: 0;
+            left: 0;
+            background: var(--gradient-primary);
+            border-radius: 30px;
+            z-index: 1;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); /* Fluid movement */
+            box-shadow: 0 5px 15px rgba(139, 115, 85, 0.3);
+        }
+
+        .nav-link { 
+            text-decoration: none; 
+            color: var(--color-text-dark); 
+            font-weight: 500; font-size: 14px; 
+            padding: 10px 24px; 
+            border-radius: 30px; 
+            transition: color 0.3s ease; 
+            display: flex; align-items: center; gap: 8px; 
+            position: relative; cursor: pointer; 
+            z-index: 2; /* Above the indicator */
+            background: transparent; /* Important: Remove individual backgrounds */
+        }
+        
+        /* Hover effect for non-active links */
+        .nav-link:not(.active):hover { color: var(--color-accent); }
+        
+        /* Active State */
+        .nav-link.active { color: white; box-shadow: none; background: transparent; }
+        
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 24px; color: var(--color-primary); padding: 8px; cursor: pointer; z-index: 1002; transition: transform 0.3s ease; }
+        .mobile-menu-btn:active { transform: scale(0.9); }
+
+        /* HOME PAGE */
+        #home { min-height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; background: var(--gradient-primary); z-index: 9999; transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1); padding: 40px 20px; }
+        #home.exited { transform: translateY(-100%); pointer-events: none; }
+        .home-container { max-width: 1400px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 2; }
+        .home-image-section { position: relative; display: flex; justify-content: center; align-items: center; }
+        .image-frame { position: relative; width: 400px; height: 400px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; padding: 15px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2); animation: floatImage 6s ease-in-out infinite; border: 1px solid rgba(255,255,255,0.4); }
+        @keyframes floatImage { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .image-frame::before { content: ''; position: absolute; inset: -12px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; opacity: 0.5; }
+        .profile-image { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 5px solid white; }
+        .decorative-circle { position: absolute; border-radius: 50%; opacity: 0.2; animation: pulse 3s ease-in-out infinite; }
+        .circle-1 { width: 80px; height: 80px; background: white; top: -20px; right: -20px; }
+        .circle-2 { width: 50px; height: 50px; background: var(--color-accent); bottom: 30px; left: -20px; animation-delay: 1s; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.2); opacity: 0.3; } }
+        .home-content { text-align: left; }
+        .greeting { font-size: 1.2rem; color: rgba(255,255,255,0.9); font-weight: 500; margin-bottom: 12px; opacity: 0; animation: fadeInUp 0.8s ease 0.2s forwards; }
+        .main-title { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 7vw, 5.5rem); font-weight: 900; line-height: 1.1; margin-bottom: 20px; color: var(--color-text-light); opacity: 0; animation: fadeInUp 0.8s ease 0.4s forwards; }
+        .title-accent { color: var(--color-accent); display: block; text-shadow: 0px 0px 20px rgba(255,255,255,0.3); }
+        .tagline { font-size: 1.1rem; color: rgba(255,255,255,0.8); line-height: 1.7; margin-bottom: 35px; font-style: italic; opacity: 0; animation: fadeInUp 0.8s ease 0.6s forwards; min-height: 1.7em; }
+        .typing-text::after { content: '|'; animation: blink 1s infinite; color: white; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .cta-buttons { display: flex; gap: 15px; opacity: 0; animation: fadeInUp 0.8s ease 0.8s forwards; flex-wrap: wrap; }
+        .btn { padding: 16px 35px; border-radius: 50px; font-weight: 600; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; transition: all 0.4s ease; border: none; position: relative; overflow: hidden; cursor: pointer; }
+        .btn::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: 0.5s; }
+        .btn:hover::after { left: 100%; }
+        .btn-primary { background: var(--color-accent); color: white; box-shadow: 0 10px 30px rgba(212, 165, 116, 0.3); }
+        .btn-primary:hover { background: #C49565; transform: translateY(-3px); box-shadow: 0 15px 40px rgba(212, 165, 116, 0.4); }
+        .btn-secondary { background: white; color: var(--color-primary); border: 2px solid white; }
+        .btn-secondary:hover { background: transparent; color: white; transform: translateY(-3px); }
+
+        /* MAIN CONTENT */
+        #mainContent { display: none; opacity: 0; transform: translateY(50px); transition: all 0.8s ease; }
+        #mainContent.active { display: block; animation: contentFadeIn 0.8s ease 0.5s forwards; }
+        @keyframes contentFadeIn { to { opacity: 1; transform: translateY(0); } }
+        .page { min-height: 100vh; display: none; }
+        .page.active { display: block; animation: pageSlide 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes pageSlide { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ABOUT PAGE - UPDATED FOR RESPONSIVENESS AND SOCIALS */
+        .about-page { padding: 120px 50px 80px; background: var(--gradient-light); }
+        .about-container { max-width: 1400px; margin: 0 auto; }
+        .about-hero { display: grid; grid-template-columns: 450px 1fr; gap: 80px; margin-bottom: 100px; align-items: center; }
+        .about-image-wrapper { position: relative; }
+        .about-image { aspect-ratio: 3/4; border-radius: 40px; overflow: hidden; box-shadow: var(--shadow-lg); position: relative; z-index: 1; transition: all 0.6s ease; border: 5px solid white; }
+        .about-image:hover { transform: scale(1.02) rotate(-2deg); box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        .about-image img { width: 100%; height: 100%; object-fit: cover; }
+        .about-intro h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 4vw, 4.5rem); margin-bottom: 30px; color: var(--color-primary); line-height: 1.2; }
+        .about-intro h1 .accent { color: var(--color-accent); }
+        .about-intro p { font-size: 16px; line-height: 2; color: var(--color-text-dark); margin-bottom: 20px; }
+        .about-intro p strong { color: var(--color-primary); font-weight: 600; }
+
+        /* NEW: About Social Icons Styling */
+        .about-social-section { margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(139, 115, 85, 0.2); }
+        .about-social-section h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--color-primary); margin-bottom: 20px; }
+        .social-links-container { display: flex; gap: 20px; flex-wrap: wrap; }
+        .social-btn-about {
+            display: flex; align-items: center; justify-content: center; width: 55px; height: 55px;
+            background: white; border-radius: 50%; color: var(--color-primary); font-size: 1.3rem;
+            box-shadow: var(--shadow-sm); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(139, 115, 85, 0.1); text-decoration: none;
+        }
+        .social-btn-about:hover { background: var(--color-accent); color: white; transform: translateY(-5px) scale(1.1); box-shadow: var(--shadow-md); border-color: var(--color-accent); }
+        /* Facebook color on hover */
+        .social-btn-about.fb:hover { background: #1877F2; border-color: #1877F2; }
+        /* Instagram gradient on hover */
+        .social-btn-about.ig:hover { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); border-color: transparent; }
+        /* Email color on hover */
+        .social-btn-about.em:hover { background: #EA4335; border-color: #EA4335; }
+
+        /* MORE PAGE */
+        .more-page { padding: 120px 50px 80px; background: var(--color-bg); min-height: 100vh; }
+        .more-container { max-width: 1400px; margin: 0 auto; }
+        .more-header { text-align: center; margin-bottom: 60px; }
+        .more-header h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem); margin-bottom: 15px; color: var(--color-primary); }
+        .more-header p { font-size: 1.2rem; color: var(--color-text-dark); opacity: 0.8; font-style: italic; }
+
+        /* BENTO GRID */
+        .bento-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; margin-bottom: 80px; }
+        .bento-card { background: white; border-radius: 30px; padding: 40px; box-shadow: var(--shadow-md); transition: all 0.4s ease; border: 1px solid rgba(139, 115, 85, 0.1); position: relative; overflow: hidden; }
+        .bento-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); border-color: var(--color-accent); }
+        .bento-header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+        .bento-icon { width: 50px; height: 50px; background: var(--gradient-primary); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; box-shadow: 0 5px 15px rgba(139, 115, 85, 0.3); }
+        .bento-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--color-primary); font-weight: 700; }
+        .skills-container { display: flex; flex-wrap: wrap; gap: 12px; }
+        .skill-pill { background: #FFF9F0; color: var(--color-text-dark); padding: 12px 25px; border-radius: 50px; font-size: 0.95rem; font-weight: 500; border: 1px solid #E8DCC8; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; cursor: default; }
+        .skill-pill i { color: var(--color-accent); }
+        .skill-pill:hover { background: var(--color-primary); color: white; border-color: var(--color-primary); transform: translateY(-2px); }
+        .skill-pill:hover i { color: white; }
+        .trait-list { display: flex; flex-direction: column; gap: 18px; }
+        .trait-item { display: flex; gap: 15px; align-items: flex-start; font-size: 0.95rem; color: #555; line-height: 1.6; }
+        .trait-marker { min-width: 24px; height: 24px; background: rgba(212, 165, 116, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-primary); font-size: 10px; margin-top: 2px; }
+        .color-section { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; text-align: center; background: linear-gradient(to right, #ffffff, #FFF9F0); }
+        .palette-strip { display: flex; justify-content: center; align-items: center; gap: 0; margin-top: 20px; padding: 20px 0; }
+        .color-circle-wrapper { position: relative; margin: 0 -10px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1; }
+        .color-circle-wrapper:hover { transform: translateY(-15px) scale(1.1); z-index: 10; margin: 0 10px; }
+        .color-circle { width: 100px; height: 100px; border-radius: 50%; border: 4px solid white; box-shadow: 0 10px 25px rgba(0,0,0,0.1); cursor: pointer; position: relative; }
+        .color-info { position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); text-align: center; opacity: 0; transition: all 0.3s ease; pointer-events: none; width: 100px; }
+        .color-circle-wrapper:hover .color-info { opacity: 1; bottom: -30px; }
+        .color-name { display: block; font-weight: 700; font-size: 0.9rem; color: var(--color-text-dark); }
+        .color-hex { display: block; font-size: 0.7rem; color: #999; text-transform: uppercase; }
+
+        /* ACHIEVEMENT & SPLIT LAYOUT */
+        .section-block { margin-bottom: 80px; }
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-header h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--color-primary); margin-bottom: 15px; }
+        .section-header p { color: var(--color-text-dark); opacity: 0.7; font-style: italic; }
+        .split-layout-container { display: flex; flex-direction: column; gap: 60px; }
+        .split-card { display: grid; grid-template-columns: 400px 1fr; gap: 50px; background: white; padding: 25px; border-radius: 35px; box-shadow: var(--shadow-md); align-items: center; transition: transform 0.4s ease; }
+        .split-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .split-image-box { width: 100%; height: 300px; border-radius: 25px; overflow: hidden; border: 5px solid var(--color-warm); box-shadow: var(--shadow-sm); position: relative; }
+       .split-image-box img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; /* CHANGE 'cover' TO 'contain' */
+    background: #f0f0f0; /* Optional: Fills the empty space with a color */
+    transition: transform 0.6s ease; 
+}
+        .split-card:hover .split-image-box img { transform: scale(1.1); }
+        .split-content-box { padding: 20px; }
+        .split-content-box h4 { font-size: 1.8rem; color: var(--color-primary); margin-bottom: 20px; font-weight: 700; border-bottom: 2px solid var(--color-warm); display: inline-block; padding-bottom: 5px; }
+        .split-content-box p { color: var(--color-text-dark); font-size: 1.05rem; line-height: 1.8; }
+
+        /* DESTINATIONS */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 35px; }
+        .gallery-card { background: transparent; display: flex; flex-direction: column; gap: 20px; transition: transform 0.4s ease; }
+        .gallery-card:hover { transform: translateY(-10px); }
+        .gallery-image-box { width: 100%; height: 240px; border-radius: 20px; overflow: hidden; border: 8px solid white; box-shadow: var(--shadow-md); position: relative; }
+        .gallery-image-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .gallery-card:hover .gallery-image-box img { transform: scale(1.1); }
+        .gallery-content-box { background: white; padding: 25px; border-radius: 20px; box-shadow: var(--shadow-sm); border: 1px solid rgba(139, 115, 85, 0.1); position: relative; }
+        .gallery-content-box::before { content: ''; position: absolute; top: -10px; left: 30px; width: 20px; height: 20px; background: white; transform: rotate(45deg); }
+        .gallery-content-box h4 { font-size: 1.2rem; color: var(--color-primary); margin-bottom: 10px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .gallery-content-box p { color: #666; font-size: 0.95rem; line-height: 1.6; }
+
+         /* SQUAD PAGE */
+        .squad-page { padding: 120px 50px 80px; background: var(--gradient-light); min-height: 100vh; }
+        .squad-container { max-width: 1400px; margin: 0 auto; }
+        .squad-header { text-align: center; margin-bottom: 60px; }
+        .squad-header h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem); margin-bottom: 15px; color: var(--color-primary); }
+        .squad-header p { font-size: 1.2rem; color: var(--color-text-dark); opacity: 0.8; font-style: italic; }
+        .squad-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-bottom: 80px; padding: 20px; }
+        .squad-card { position: relative; height: 500px; border-radius: 30px; overflow: hidden; box-shadow: var(--shadow-md); cursor: pointer; transition: all 0.4s ease; background: #000; }
+        .squad-card:hover { transform: translateY(-15px); box-shadow: 0 20px 50px rgba(74, 63, 53, 0.3); }
+        .squad-image { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+        .squad-image img { width: 100%; height: 100%; object-fit: cover; object-position: center; transition: transform 0.6s ease; filter: brightness(0.9); }
+        .squad-card:hover .squad-image img { transform: scale(1.1); filter: brightness(1); }
+        .squad-info { position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 60%, transparent 100%); color: white; transform: translateY(100px); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; justify-content: flex-end; }
+        .squad-card:hover .squad-info { transform: translateY(0); }
+        .squad-info h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .squad-role { font-size: 0.9rem; color: var(--color-accent); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: inline-block; }
+        .squad-description { font-size: 0.95rem; color: rgba(255,255,255,0.9); line-height: 1.6; margin-bottom: 20px; opacity: 0; transition: opacity 0.4s ease 0.1s; }
+        .squad-card:hover .squad-description { opacity: 1; }
+        .squad-socials { display: flex; gap: 15px; opacity: 0; transform: translateY(20px); transition: all 0.4s ease 0.2s; position: relative; z-index: 10; }
+        .squad-card:hover .squad-socials { opacity: 1; transform: translateY(0); }
+        .squad-socials a { width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; color: white; transition: all 0.3s ease; text-decoration: none; border: 1px solid rgba(255,255,255,0.3); }
+        .squad-socials a:hover { background: var(--color-accent); transform: scale(1.1) rotate(360deg); border-color: var(--color-accent); }
+
+        /* MOMENTS SECTION */
+        .moments-section { margin-top: 60px; padding-top: 80px; padding-bottom: 60px; position: relative; text-align: center; background: linear-gradient(to bottom, var(--color-bg), #1a1a1a); color: white; }
+        .moments-carousel-wrapper { position: relative; width: 100%; height: 500px; overflow: hidden; margin: 40px auto; display: flex; align-items: center; justify-content: center; perspective: 1500px; }
+        .moments-track { display: flex; gap: 40px; transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); position: absolute; left: 50%; align-items: center; transform-style: preserve-3d; }
+        .moment-slide { flex: 0 0 500px; height: 350px; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 45px rgba(0,0,0,0.6); transition: all 0.8s ease; position: relative; opacity: 0.5; transform: scale(0.85) translateX(0); filter: grayscale(60%); cursor: pointer; background: #000; border: 1px solid rgba(255,255,255,0.1); }
+        .moment-slide.center { opacity: 1; transform: scale(1.15); z-index: 10; filter: grayscale(0%) blur(0px); box-shadow: 0 30px 90px rgba(212, 165, 116, 0.4); border: 2px solid var(--color-accent); }
+        .moment-slide img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+        .moment-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 30px 20px; background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 10%, transparent 100%); color: white; opacity: 0; transform: translateY(10px); transition: all 0.5s ease; text-align: center; }
+        .moment-slide.center .moment-caption { opacity: 1; transform: translateY(0); }
+        
+        /* IMAGE MODAL */
+        .image-modal { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 999999; justify-content: center; align-items: center; animation: fadeIn 0.3s ease; }
+        .image-modal.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content { position: relative; max-width: 95vw; max-height: 95vh; animation: zoomIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0; }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-content img { max-width: 100%; max-height: 85vh; width: auto; height: auto; object-fit: contain; border-radius: 15px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); display: block; }
+        .modal-close { position: absolute; top: -60px; right: 0; background: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 24px; color: var(--color-primary); cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; z-index: 1000000; }
+        .modal-close:hover { transform: scale(1.1) rotate(90deg); background: var(--color-accent); color: white; }
+        .modal-caption { margin-top: 20px; text-align: center; color: white; width: 100%; }
+        .modal-caption h4 { font-size: 1.5rem; margin-bottom: 5px; }
+        .modal-caption p { font-size: 1rem; opacity: 0.8; }
+        .controls-container { display: flex; flex-direction: column; align-items: center; gap: 25px; margin-top: 40px; }
+        .carousel-controls { display: flex; justify-content: center; gap: 15px; }
+        .carousel-btn { width: 55px; height: 55px; border-radius: 50%; background: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--color-primary); transition: all 0.3s ease; cursor: pointer; box-shadow: var(--shadow-sm); }
+        .carousel-btn:hover { background: var(--gradient-primary); color: white; transform: scale(1.1); box-shadow: var(--shadow-md); }
+        .audio-control-advanced { background: white; color: var(--color-primary); border: none; padding: 14px 35px; border-radius: 35px; font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 12px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: var(--shadow-md); cursor: pointer; }
+        .audio-control-advanced:hover { background: var(--gradient-primary); color: white; transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .audio-control-advanced.playing { background: var(--gradient-primary); color: white; }
+        .audio-waves { display: none; gap: 3px; height: 16px; align-items: center; }
+        .audio-waves.playing { display: flex; }
+        .wave-bar { width: 3px; background-color: currentColor; animation: wave 1s ease-in-out infinite; border-radius: 2px; }
+        .wave-1 { height: 40%; animation-delay: 0.1s; }
+        .wave-2 { height: 70%; animation-delay: 0.2s; }
+        .wave-3 { height: 100%; animation-delay: 0.3s; }
+        .wave-4 { height: 60%; animation-delay: 0.4s; }
+        @keyframes wave { 0%, 100% { height: 20%; } 50% { height: 100%; } }
+
+        /* PLAYLIST PAGE */
+        .playlist-page { 
+            padding: 120px 50px 80px; 
+            background: var(--gradient-primary); 
+            min-height: 100vh; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .playlist-page.active { display: flex; }
+
+        .playlist-container { width: 100%; max-width: 1100px; }
+        .music-player-wrapper { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-radius: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); display: flex; overflow: hidden; min-height: 500px; }
+        .player-side { width: 45%; padding: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(to bottom, #FFF9F0, #fff); border-right: 1px solid rgba(0,0,0,0.05); position: relative; z-index: 2; }
+        .img-area { width: 220px; height: 220px; border-radius: 50%; box-shadow: 0 15px 35px rgba(139, 115, 85, 0.3); margin-bottom: 30px; position: relative; overflow: hidden; border: 8px solid #fff; }
+        .img-area img { width: 100%; height: 100%; object-fit: cover; }
+        .img-area.playing img { animation: rotateRecord 15s linear infinite; }
+        @keyframes rotateRecord { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .song-details { text-align: center; margin-bottom: 30px; }
+        .song-details .name { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--color-primary); font-weight: 700; margin-bottom: 5px; }
+        .song-details .artist { font-size: 1rem; color: #888; }
+        .progress-area { width: 100%; height: 6px; background: #e0e0e0; border-radius: 50px; cursor: pointer; margin-bottom: 10px; }
+        .progress-bar { height: 100%; width: 0%; background: var(--color-accent); border-radius: 50px; position: relative; }
+        .progress-bar::before { content: ''; position: absolute; right: -5px; top: 50%; transform: translateY(-50%); height: 12px; width: 12px; background: var(--color-primary); border-radius: 50%; opacity: 0; transition: opacity 0.2s ease; }
+        .progress-area:hover .progress-bar::before { opacity: 1; }
+        .timer { display: flex; justify-content: space-between; font-size: 13px; color: #999; margin-top: 8px; }
+        .controls { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding: 0 20px; }
+        .controls i { font-size: 24px; user-select: none; background: -webkit-linear-gradient(#A68870, #8B7355); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; transition: transform 0.2s ease; }
+        .controls i:active { transform: scale(0.9); }
+        .controls .play-pause i { font-size: 65px; background: -webkit-linear-gradient(var(--color-accent), #C49565); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 10px 15px rgba(212, 165, 116, 0.3)); }
+        .list-side { width: 55%; padding: 30px; background: #fff; overflow-y: auto; max-height: 600px; }
+        .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .list-header span { font-weight: 600; color: var(--color-text-dark); font-size: 1.1rem; }
+        .list-header .queue-count { font-size: 0.9rem; color: #999; font-weight: 400; }
+        #music-list { list-style: none; }
+        #music-list li { display: flex; align-items: center; padding: 15px; border-radius: 15px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s ease; border: 1px solid transparent; }
+        #music-list li:hover { background: #FFF9F0; transform: translateX(5px); }
+        #music-list li.playing { background: #FFF9F0; border-color: var(--color-accent); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .row-img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; margin-right: 15px; }
+        .row-details { flex: 1; }
+        .row-details span { display: block; }
+        .row-details .list-name { font-weight: 600; color: #444; font-size: 1rem; }
+        .row-details .list-artist { font-size: 0.85rem; color: #999; }
+        .audio-duration { font-size: 0.9rem; color: #999; }
+        
+        /* ========== UPDATED RESPONSIVE DESIGN ========== */
+        /* Large Tablets & Small Laptops */
+        @media (max-width: 1024px) {
+            .home-container { grid-template-columns: 1fr; text-align: center; gap: 40px; }
+            .home-content { text-align: center; }
+            .cta-buttons { justify-content: center; }
+            .image-frame { width: 350px; height: 350px; }
+            .about-hero { grid-template-columns: 1fr; gap: 50px; }
+            .about-image { max-width: 450px; margin: 0 auto; }
+            .about-intro { text-align: center; }
+            .social-links-container { justify-content: center; }
+            
+            .split-card { grid-template-columns: 1fr; text-align: center; padding: 30px; }
+            .split-image-box { height: 350px; }
+            .split-content-box h4 { display: block; border: none; margin-bottom: 15px; }
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+            .bento-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Tablets & Mobile */
+        @media (max-width: 850px) {
+            .music-player-wrapper { flex-direction: column; height: auto; }
+            .player-side, .list-side { width: 100%; }
+            .player-side { padding: 30px 20px; border-right: none; border-bottom: 1px solid #eee; }
+            .img-area { width: 180px; height: 180px; }
+            .list-side { height: 400px; }
+        }
+
+        /* Mobile Navigation Styling */
+        @media (max-width: 768px) {
+            nav { padding: 15px 25px; }
+            .nav-links { 
+                position: fixed; 
+                top: 70px; left: 15px; right: 15px; 
+                background: rgba(255, 255, 255, 0.95); /* Lighter background for menu */
+                backdrop-filter: blur(20px); 
+                flex-direction: column; 
+                padding: 10px; 
+                box-shadow: var(--shadow-lg); 
+                border-radius: 20px;
+                transform: translateY(-150%) scale(0.9); 
+                transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Bouncy effect */
+                gap: 5px; 
+                opacity: 0;
+                pointer-events: none;
+            }
+            .nav-links.active { 
+                transform: translateY(0) scale(1); 
+                opacity: 1;
+                pointer-events: all;
+            }
+            .nav-link { width: 100%; justify-content: center; padding: 14px 20px; }
+            
+            /* Reset indicator specific for mobile stack */
+            .nav-indicator {
+                transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1), height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .mobile-menu-btn { display: block; }
+            .main-title { font-size: 2.8rem; }
+            .greeting { font-size: 1.1rem; }
+            .tagline { font-size: 1rem; }
+            .cta-buttons { flex-direction: column; width: 100%; }
+            .btn { width: 100%; justify-content: center; }
+            
+            .about-page, .squad-page, .more-page, .playlist-page { padding: 100px 25px 60px; }
+            
+            .moments-carousel-wrapper { height: 450px; }
+            .moment-slide { flex: 0 0 280px; height: 350px; }
+            
+            .squad-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto 80px; }
+            .color-circle { width: 70px; height: 70px; }
+            .palette-strip { flex-wrap: wrap; gap: 15px; margin: 0; }
+            .color-circle-wrapper { margin: 0; }
+            
+            .about-intro h1 { font-size: 2.5rem; }
+            .about-intro p { font-size: 15px; text-align: justify; }
+            .about-image { width: 100%; max-width: 350px; }
+        }
+
+        @media (max-width: 480px) {
+            .image-frame { width: 280px; height: 280px; }
+            .moments-carousel-wrapper { height: 400px; }
+            .moment-slide { flex: 0 0 240px; height: 320px; }
+            .section-title { font-size: 2.2rem; }
+            .about-page, .squad-page, .more-page, .playlist-page { padding: 90px 20px 50px; }
+            .modal-content { max-width: 95%; }
+            .split-image-box { height: 250px; }
+            
+            .social-btn-about { width: 50px; height: 50px; font-size: 1.2rem; }
+            .bento-card { padding: 25px; }
+            .controls i { font-size: 20px; }
+            .controls .play-pause i { font-size: 55px; }
+        }
+    </style>
+</head>
+<body>
+     <div id="home">
+        <div class="home-container">
+            <div class="home-image-section">
+                <div class="decorative-circle circle-1"></div>
+                <div class="decorative-circle circle-2"></div>
+                <div class="image-frame">
+                    <img src="GL2.jpeg" alt="Glee-Yah" class="profile-image">
+                </div>
+            </div>
+
+            <div class="home-content">
+                <p class="greeting">Hello, It's Me</p>
+                <h1 class="main-title">Glee-Yah</h1>
+                <p class="tagline">"<span id="typingText" class="typing-text"></span>"</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary" onclick="enterSite()">
+                        <span>Explore My World</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav id="mainNav">
+        <div class="nav-brand">Glee-Yah</div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-links" id="navLinks">
+            <div class="nav-indicator"></div>
+            
+            <div class="nav-link" onclick="goHome(); closeMobileMenu()">
+                <i class="fas fa-home"></i> Home
+            </div>
+            <div class="nav-link active" onclick="showPage('about'); closeMobileMenu()">
+                <i class="fas fa-user"></i> About
+            </div>
+            <div class="nav-link" onclick="showPage('more'); closeMobileMenu()">
+                <i class="fas fa-star"></i> More
+            </div>
+            <div class="nav-link" onclick="showPage('squad'); closeMobileMenu()">
+                <i class="fas fa-users"></i> Squad
+            </div>
+            <div class="nav-link" onclick="showPage('playlist'); closeMobileMenu()">
+                <i class="fas fa-music"></i> Playlist
+            </div>
+        </div>
+    </nav>
+
+    <div id="mainContent">
+        <div id="about" class="page about-page active">
+            <div class="about-container">
+                <div class="about-hero">
+                    <div class="about-image-wrapper reveal-on-scroll">
+                        <div class="about-image">
+                            <img src="Me4.jpeg" alt="Glee-Yah">
+                        </div>
+                    </div>
+                    <div class="about-intro reveal-on-scroll">
+                       <h1>Life on My <span class="accent">Wavelength</span></h1>
+                        <p>Greetings! I am currently in my fourth year pursuing a <strong>Bachelor of Science in Information Technology</strong>, focusing on Web and Development, proudly representing the College of Information and Computing Studies at <strong>Northern Iloilo State University (NISU)</strong>.</p>
+                        <p>Although my academic journey began unexpectedly and presented numerous challenges, it has turned out to be the right path, leading me to a sense of fulfillment I wouldn't have discovered otherwise.</p>
+                        <p>My life strikes a balance between my academic pursuits and my faith; I have been actively involved with the <strong>EL Shaddai DWXI Partners Fellowship</strong>, which is recognized as the largest Catholic charismatic movement in the Philippines.</p>
+                        <p>I flourish in environments filled with positive, high-energy individuals, where I can openly express my true self without fear of judgment and engage in meaningful growth.</p>
+                        <p>I am naturally warm and approachable, and I always fond of using humor as a means to connect with others. I have a lively personality and can easily adjust my style to resonate with those who share my joyful outlook. This ability to seek out and radiate positive energy shapes my personal approach, ensuring I <strong>surround myself with people who are on my wavelength.</strong></p>
+                        
+                        <div class="about-social-section">
+                            <h3>Connect With Me for More Updates!</h3>
+                            <div class="social-links-container">
+                                <a href="https://www.facebook.com/gleah.paciente" target="_blank" class="social-btn-about fb" title="Facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="https://www.instagram.com/its.glyahh/" target="_blank" class="social-btn-about ig" title="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="mailto:gleeyahpaciente@gmail.com" class="social-btn-about em" title="Email Me">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="more" class="page more-page">
+            <div class="more-container">
+                <div class="more-header reveal-on-scroll">
+                    <h1>Beyond the Surface</h1>
+                    <p>The details that shape who I am</p>
+                </div>
+
+                <div class="bento-grid">
+                    <div class="bento-card reveal-on-scroll">
+                        <div class="bento-header">
+                            <div class="bento-icon"><i class="fas fa-laptop-code"></i></div>
+                            <h3 class="bento-title">Core Skills</h3>
+                        </div>
+                        <div class="skills-container">
+                            <span class="skill-pill"><i class="fas fa-bolt"></i> Adaptability</span>
+                            <span class="skill-pill"><i class="fas fa-clock"></i> Time Management</span>
+                            <span class="skill-pill"><i class="fas fa-flag"></i> Leadership</span>
+                            <span class="skill-pill"><i class="fas fa-comments"></i> Communication</span>
+                            <span class="skill-pill"><i class="fas fa-brain"></i> Self-awareness</span>
+                            <span class="skill-pill"><i class="fas fa-search"></i> Detail Oriented</span>
+                            <span class="skill-pill"><i class="fas fa-users"></i> Teamwork</span>
+                            <span class="skill-pill"><i class="fas fa-pen-fancy"></i> Creativity</span>
+                        </div>
+                    </div>
+
+                    <div class="bento-card reveal-on-scroll">
+                        <div class="bento-header">
+                            <div class="bento-icon"><i class="fas fa-fingerprint"></i></div>
+                            <h3 class="bento-title">Authentic Self</h3>
+                        </div>
+                        <div class="trait-list">
+                            <div class="trait-item">
+                                <div class="trait-marker"><i class="fas fa-check"></i></div>
+                                <span>Perfectionist tendencies can sometimes slow me down</span>
+                            </div>
+                            <div class="trait-item">
+                                <div class="trait-marker"><i class="fas fa-check"></i></div>
+                                <span>Can be overly critical of my own work</span>
+                            </div>
+                            <div class="trait-item">
+                                <div class="trait-marker"><i class="fas fa-check"></i></div>
+                                <span>Struggle saying no to helping others</span>
+                            </div>
+                            <div class="trait-item">
+                                <div class="trait-marker"><i class="fas fa-check"></i></div>
+                                <span>Deeply value meaningful connections</span>
+                            </div>
+                            <div class="trait-item">
+                                <div class="trait-marker"><i class="fas fa-check"></i></div>
+                                <span>Learning to balance ambition with rest</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bento-card color-section reveal-on-scroll">
+                        <div class="bento-header" style="justify-content: center;">
+                            <div class="bento-icon"><i class="fas fa-palette"></i></div>
+                            <h3 class="bento-title">Aesthetic Palette</h3>
+                        </div>
+                        <p style="color: #666; margin-bottom: 10px; font-style: italic;">The shades that paint my world</p>
+                        
+                        <div class="palette-strip">
+                            <div class="color-circle-wrapper">
+                                <div class="color-circle" style="background: #A9D393;"></div>
+                                <div class="color-info">
+                                    <span class="color-name">Pistachio</span>
+                                    <span class="color-hex">#A9D393</span>
+                                </div>
+                            </div>
+                            
+                            <div class="color-circle-wrapper">
+                                <div class="color-circle" style="background: #47240E;"></div>
+                                <div class="color-info">
+                                    <span class="color-name">Coffee</span>
+                                    <span class="color-hex">#47240E</span>
+                                </div>
+                            </div>
+                            
+                            <div class="color-circle-wrapper">
+                                <div class="color-circle" style="background: #F0BFAB;"></div>
+                                <div class="color-info">
+                                    <span class="color-name">Peach</span>
+                                    <span class="color-hex">#F0BFAB</span>
+                                </div>
+                            </div>
+                            
+                            <div class="color-circle-wrapper">
+                                <div class="color-circle" style="background: #FAB972;"></div>
+                                <div class="color-info">
+                                    <span class="color-name">Orange</span>
+                                    <span class="color-hex">#FAB972</span>
+                                </div>
+                            </div>
+                            
+                            <div class="color-circle-wrapper">
+                                <div class="color-circle" style="background: #FFC2D1;"></div>
+                                <div class="color-info">
+                                    <span class="color-name">Pink</span>
+                                    <span class="color-hex">#FFC2D1</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-block reveal-on-scroll">
+                    <div class="section-header">
+                        <h2><i class="fas fa-trophy"></i> Achievements</h2>
+                        <p>Milestones that shaped my journey</p>
+                    </div>
+                    
+                    <div class="split-layout-container">
+                        <div class="split-card">
+                            <div class="split-image-box">
+                                <img src="honor.jpg" alt="Graduation Achievement">
+                            </div>
+                            <div class="split-content-box">
+                                <h4>Academic Excellence</h4>
+                                <p>I may not have as many accomplishments as others due to my lack of self-confidence. However, I have reached a significant milestone in my life by being a consistent honor student throughout both elementary and high school. I graduated with high honors from Balasan National High School, where I was also honored to perform as one of the singers for our graduation song and tribute to our families. Now that I'm in college, I've kept up that consistent performance by being a Dean's Lister since my first year.</p>
+                            </div>
+                        </div>
+
+                        <div class="split-card">
+                             <div class="split-image-box">
+                                <img src="youth.jpg" alt="Music and Dance">
+                            </div>
+                            <div class="split-content-box">
+                                <h4>My Spiritual Home</h4>
+                                <p>My involvement as an active youth dancer and choir member is something I consider an achievement. Through music and dance, I've found ways to express myself, serve God, and connect with others on a deeper level.</p>
+                            </div>
+                        </div>
+                        <div class="split-card">
+                             <div class="split-image-box">
+                                <img src="pageant.jpeg" alt="My Multo">
+                            </div>
+                            <div class="split-content-box">
+                                <h4>Gaining experience Amid the Anxiety</h4>
+                                <p>I secured the position of second runner-up in the Mr. and Ms. CICS 2024 pageant during our College Week. I made an effort to face my fear and anxiety, aware that many people had faith in my abilities; however, I still felt unprepared for the experience. Nonetheless, I am grateful to God for this unique opportunity, which provided me with invaluable lessons. </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-block reveal-on-scroll">
+                    <div class="section-header">
+                        <h2><i class="fas fa-plane-departure"></i> Dream Travel Destinations</h2>
+                        <p>Places I dream of exploring someday</p>
+                    </div>
+                    
+                    <div class="gallery-grid">
+                        <div class="gallery-card">
+                            <div class="gallery-image-box">
+                                <img src="Greece.jpg" alt="Santorini Greece">
+                            </div>
+                            <div class="gallery-content-box">
+                                <h4><i class="fas fa-map-marker-alt"></i> Santorini, Greece</h4>
+                                <p>This represents the perfect blend of beauty and tranquility I seek.</p>
+                            </div>
+                        </div>
+
+                        <div class="gallery-card">
+                            <div class="gallery-image-box">
+                                <img src="switzerland.jpeg" alt="Switzerland">
+                            </div>
+                            <div class="gallery-content-box">
+                                <h4><i class="fas fa-map-marker-alt"></i> Switzerland</h4>
+                                <p>A place that uphold serenity that I really want.</p>
+                            </div>
+                        </div>
+
+                        <div class="gallery-card">
+                            <div class="gallery-image-box">
+                                <img src="paris.jpg" alt="Paris France">
+                            </div>
+                            <div class="gallery-content-box">
+                                <h4><i class="fas fa-map-marker-alt"></i> Paris, France</h4>
+                                <p>My childhood dream destination - where creativity and beauty converge.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="gallery-card">
+                            <div class="gallery-image-box">
+                                <img src="thailand.jpg" alt="Yi Peng Thailand">
+                            </div>
+                            <div class="gallery-content-box">
+                                <h4><i class="fas fa-map-marker-alt"></i> Yi Peng, Thailand</h4>
+                                <p>I would love to experience that breathtaking moment, like Rapunzel.</p>
+                            </div>
+                        </div>
+
+                        <div class="gallery-card">
+                            <div class="gallery-image-box">
+                                <img src="netherlands.jpg" alt="Amsterdam Netherlands">
+                            </div>
+                            <div class="gallery-content-box">
+                                <h4><i class="fas fa-map-marker-alt"></i> Amsterdam, Netherlands</h4>
+                                <p>Because tulips are my favorite flowers.</p>
+                            </div>
+                        </div>
+
+                        <div class="gallery-card">
+                            <div class="gallery-image-box">
+                                <img src="italy.jpg" alt="Florence Italy">
+                            </div>
+                            <div class="gallery-content-box">
+                                <h4><i class="fas fa-map-marker-alt"></i> Florence, Italy</h4>
+                                <p>Captivated by its absolute beauty.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="squad" class="page squad-page">
+            <div class="squad-container">
+                <div class="squad-header reveal-on-scroll">
+                    <h1>My Squad</h1>
+                    <p>Aslomers: The constant anchor in my journey</p>
+                </div>
+
+                <div class="squad-grid">
+                    <div class="squad-card reveal-on-scroll">
+                        <div class="squad-image">
+                            <img src="lance.jpeg" alt="Jerry Lance Alavaren">
+                        </div>
+                        <div class="squad-info">
+                            <h3>Jerry Lance Alavaren</h3>
+                            <p class="squad-role">The Jovial One</p>
+                            <p class="squad-description">He is a master of intelligent wit, effortlessly amazes people as he constantly turns the weight of the day into something light and wholly ridiculous.</p>
+                            <div class="squad-socials">
+                                <a href="https://m.facebook.com/lance.alavaren.9/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.instagram.com/lllncx_z/" target="_blank"><i class="fab fa-instagram"></i></a>
+                                <a href="https://jlance-azure.vercel.app/" target="_blank" title="Website"><i class="fas fa-globe"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="squad-card reveal-on-scroll">
+                        <div class="squad-image">
+                            <img src="nersha.jpeg" alt="Nersha Marie Beronio">
+                        </div>
+                        <div class="squad-info">
+                            <h3>Nersha Marie Beronio</h3>
+                            <p class="squad-role">The Personal Essayist</p>
+                            <p class="squad-description">You can always see her reading. She enjoys enchanting every reader by crafting imaginative romance tales.</p>
+                            <div class="squad-socials">
+                                <a href="https://m.facebook.com/nrsh.beronio/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.instagram.com/nrsssh/" target="_blank"><i class="fab fa-instagram"></i></a>
+                                <a href="https://nrshberonio.vercel.app/" target="_blank" title="Website"><i class="fas fa-globe"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="squad-card reveal-on-scroll">
+                        <div class="squad-image">
+                            <img src="irish.jpeg" alt="Irish Mae Mapa">
+                        </div>
+                        <div class="squad-info">
+                            <h3>Irish Mae Mapa</h3>
+                            <p class="squad-role">A Human Safety Net</p>
+                            <p class="squad-description">Nonchalant but always has a care. She provides stability and calm during life's most turbulent moment.</p>
+                            <div class="squad-socials">
+                                <a href="https://m.facebook.com/irish.mapa.940/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.instagram.com/in2tlps_/" target="_blank"><i class="fab fa-instagram"></i></a>
+                                <a href="https://knowirish.vercel.app/" target="_blank" title="Website"><i class="fas fa-globe"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="squad-card reveal-on-scroll">
+                        <div class="squad-image">
+                            <img src="apple.jpeg" alt="Merry Christile Castro">
+                        </div>
+                        <div class="squad-info">
+                            <h3>Merry Christile Castro</h3>
+                            <p class="squad-role">A Coffee for the Soul</p>
+                            <p class="squad-description">Our human caffeine. Her presence provides soul-level satisfaction and genuine happiness.</p>
+                            <div class="squad-socials">
+                                <a href="https://m.facebook.com/merrychristiledelmo.castro/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.instagram.com/itss_mechristile/" target="_blank"><i class="fab fa-instagram"></i></a>
+                                <a href="https://merrychristlecastro.kesug.com/?i=1" target="_blank" title="Website"><i class="fas fa-globe"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <audio id="momentsAudio" loop>
+                    <source src="Music1.mp3" type="audio/mpeg">
+                </audio>
+
+                <div id="momentsSection" class="moments-section reveal-on-scroll">
+                    <h2 class="section-title">Happy Moments</h2>
+                    <p class="section-subtitle">Capturing joy, one memory at a time</p>
+                    
+                    <div class="moments-carousel-wrapper">
+                        <div class="moments-track" id="momentsTrack"></div>
+                    </div>
+
+                    <div class="controls-container">
+                        <div class="carousel-controls">
+                            <button class="carousel-btn" onclick="previousMoment()">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="carousel-btn" id="autoplayBtn" onclick="toggleAutoplay()">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="carousel-btn" onclick="nextMoment()">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <button id="audioToggleBtn" class="audio-control-advanced" onclick="toggleMomentsAudio()">
+                            <i class="fas fa-music"></i> 
+                            <span id="audioBtnText">Play Background Music</span>
+                            <div class="audio-waves">
+                                <div class="wave-bar wave-1"></div>
+                                <div class="wave-bar wave-2"></div>
+                                <div class="wave-bar wave-3"></div>
+                                <div class="wave-bar wave-4"></div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-modal" id="imageModal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeImageModal()">&times;</button>
+                <img id="modalImage" src="" alt="Full view">
+                <div class="modal-caption">
+                    <h4 id="modalTitle"></h4>
+                    <p id="modalCaption"></p>
+                </div>
+            </div>
+        </div>
+
+       <div id="playlist" class="page playlist-page">
+            <div class="playlist-container">
+                <div class="playlist-header reveal-on-scroll">
+                    <h1>My Daily Soundtrack</h1>
+                    <p>Lists of Mostly Played Songs</p>
+                </div>
+
+                <audio id="main-audio"></audio>
+
+                <div class="music-player-wrapper reveal-on-scroll">
+                    <div class="player-side">
+                        <div class="img-area">
+                            <img src="" alt="Album Art" id="music-img">
+                            <div class="vinyl-effect"></div>
+                        </div>
+                        
+                        <div class="song-details">
+                            <p class="name" id="music-name">Select a Song</p>
+                            <p class="artist" id="music-artist">Glee-Yah's Playlist</p>
+                        </div>
+
+                        <div class="progress-area" id="progress-area">
+                            <div class="progress-bar" id="progress-bar"></div>
+                            <div class="timer">
+                                <span class="current" id="current-time">0:00</span>
+                                <span class="duration" id="max-duration">0:00</span>
+                            </div>
+                        </div>
+
+                        <div class="controls">
+                            <i id="prev" class="fas fa-step-backward" onclick="prevSong()"></i>
+                            <div class="play-pause" onclick="playPause()">
+                                <i class="fas fa-play-circle" id="play-pause-btn"></i>
+                            </div>
+                            <i id="next" class="fas fa-step-forward" onclick="nextSong()"></i>
+                        </div>
+                    </div>
+
+                    <div class="list-side">
+                        <div class="list-header">
+                            <span>Up Next</span>
+                            <span class="queue-count" id="queue-count">3 songs</span>
+                        </div>
+                        <ul id="music-list">
+                            </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script>
+        const textToType = "Where laughter is my true rebellion and joy is my glee.";
+        const typingElement = document.getElementById('typingText');
+        let charIndex = 0;
+
+        function typeWriter() {
+            if (charIndex < textToType.length) {
+                typingElement.textContent += textToType.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 50);
+            }
+        }
+
+        setTimeout(typeWriter, 1500);
+
+        const observerOptions = { threshold: 0.15 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+
+        // === MOMENTS IMAGES ===
+        const moments = [
+            { img: 'friends3.jpeg', title: 'Aslomers', caption: 'The squad that makes life worth living' },
+            { img: 'friends2.jpeg', title: 'College Achievement', caption: 'No one should be left behind.' },
+            { img: 'friend.jpeg', title: 'Random Snap', caption: 'First day of Midterm  Exam' },
+            { img: 'friend2.jpeg', title: 'Ceres Bus Moment', caption: 'Trying that trend of stop the bus' },
+            { img: 'friends5.jpeg', title: 'DIY Story', caption: 'buying things cause we deserve it' },
+            { img: 'friends6.jpeg', title: 'Midterm Feels', caption: 'All efforts are really paid off' }
+        ];
+
+        let currentMoment = 0;
+        let currentSong = -1;
+        let isPlaying = false;
+        let audioPlayer = null;
+        let autoplayInterval;
+        let autoplayEnabled = false;
+        let audioPlaying = false;
+        let hasAutoStarted = false;
+
+        function toggleMobileMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+            // Calculate pill position after menu opens
+            setTimeout(updateNavIndicator, 300);
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('navLinks').classList.remove('active');
+        }
+
+        function initMomentsCarousel() {
+            const track = document.getElementById('momentsTrack');
+            const extendedMoments = [...moments, ...moments, ...moments];
+            
+            track.innerHTML = extendedMoments.map((moment, index) => `
+                <div class="moment-slide ${index === moments.length ? 'center' : ''}" data-index="${index}" onclick="openImageModal(${index % moments.length})">
+                    <img src="${moment.img}" alt="${moment.title}" onerror="this.src='https://via.placeholder.com/500x350/8B7355/FFFFFF?text=Image+Not+Found'">
+                    <div class="moment-caption">
+                        <h4>${moment.title}</h4>
+                        <p>${moment.caption}</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            currentMoment = moments.length;
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const slides = document.querySelectorAll('.moment-slide');
+            const track = document.getElementById('momentsTrack');
+
+            slides.forEach((slide, index) => {
+                slide.classList.remove('center');
+                if (index === currentMoment) {
+                    slide.classList.add('center');
+                }
+            });
+
+            const isMobile = window.innerWidth <= 768;
+            const slideWidth = isMobile ? 300 : 500;
+            const gap = 40;
+            const totalStride = slideWidth + gap;
+            const centerOffset = slideWidth / 2;
+            const moveAmount = (currentMoment * totalStride) + centerOffset;
+
+            track.style.transform = `translateX(-${moveAmount}px)`;
+
+            if (currentMoment >= moments.length * 2 || currentMoment < moments.length) {
+                let targetIndex;
+                if (currentMoment >= moments.length * 2) {
+                    targetIndex = moments.length;
+                } else {
+                    targetIndex = moments.length * 2 - 1;
+                }
+
+                const resetDelay = 810; 
+
+                setTimeout(() => {
+                    track.style.transition = 'none';
+                    currentMoment = targetIndex;
+                    const resetMove = (currentMoment * totalStride) + centerOffset;
+                    track.style.transform = `translateX(-${resetMove}px)`;
+                    requestAnimationFrame(() => {
+                        track.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    });
+                }, resetDelay);
+            }
+        }
+
+        function openImageModal(index) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalCaption = document.getElementById('modalCaption');
+            const moment = moments[index];
+            
+            modalImg.src = moment.img;
+            modalImg.onerror = function() {
+                this.src = 'https://via.placeholder.com/800x600/8B7355/FFFFFF?text=Image+Not+Found';
+            };
+            modalTitle.textContent = moment.title;
+            modalCaption.textContent = moment.caption;
+            modal.classList.add('active');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        function nextMoment() {
+            currentMoment++;
+            updateCarousel();
+        }
+
+        function previousMoment() {
+            currentMoment--;
+            updateCarousel();
+        }
+
+        function toggleAutoplay(forceStart = false) {
+            const btn = document.getElementById('autoplayBtn');
+            if (forceStart) {
+                autoplayEnabled = true;
+            } else {
+                autoplayEnabled = !autoplayEnabled;
+            }
+            
+            if (autoplayEnabled) {
+                btn.innerHTML = '<i class="fas fa-pause"></i>';
+                if(autoplayInterval) clearInterval(autoplayInterval);
+                autoplayInterval = setInterval(nextMoment, 3000);
+            } else {
+                btn.innerHTML = '<i class="fas fa-play"></i>';
+                clearInterval(autoplayInterval);
+            }
+        }
+
+        function fadeInAudio(audioElement, duration = 2000) {
+            audioElement.volume = 0;
+            audioElement.play().catch(e => console.log("Audio play blocked:", e));
+            
+            let vol = 0;
+            const interval = 50;
+            const step = interval / duration;
+            
+            const fade = setInterval(() => {
+                if (vol < 0.7) {
+                    vol += step;
+                    if(vol > 0.7) vol = 0.7;
+                    audioElement.volume = vol;
+                } else {
+                    clearInterval(fade);
+                }
+            }, interval);
+        }
+
+        function toggleMomentsAudio() {
+            const audio = document.getElementById('momentsAudio');
+            const btn = document.getElementById('audioToggleBtn');
+            const icon = btn.querySelector('i');
+            const text = document.getElementById('audioBtnText');
+            const waves = document.querySelector('.audio-waves');
+            
+            if (!audioPlaying) {
+                audio.volume = 0.7;
+                audio.play().then(() => {
+                    audioPlaying = true;
+                    icon.className = 'fas fa-pause';
+                    text.textContent = 'Pause Music';
+                    waves.classList.add('playing');
+                    btn.classList.add('playing');
+                }).catch(e => {
+                    console.log('Audio play failed:', e);
+                });
+            } else {
+                audio.pause();
+                audioPlaying = false;
+                icon.className = 'fas fa-music';
+                text.textContent = 'Play Background Music';
+                waves.classList.remove('playing');
+                btn.classList.remove('playing');
+            }
+        }
+
+        function updateAudioUIState(isPlaying) {
+            const btn = document.getElementById('audioToggleBtn');
+            const icon = btn.querySelector('i');
+            const text = document.getElementById('audioBtnText');
+            const waves = document.querySelector('.audio-waves');
+
+            if (isPlaying) {
+                icon.className = 'fas fa-pause';
+                text.textContent = 'Pause Music';
+                waves.classList.add('playing');
+                btn.classList.add('playing');
+            } else {
+                icon.className = 'fas fa-music';
+                text.textContent = 'Play Background Music';
+                waves.classList.remove('playing');
+                btn.classList.remove('playing');
+            }
+        }
+
+        const momentsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const audio = document.getElementById('momentsAudio');
+                
+                if (entry.isIntersecting) {
+                    if (!hasAutoStarted) {
+                        hasAutoStarted = true;
+                        if (!autoplayEnabled) {
+                            toggleAutoplay(true);
+                        }
+                        if (!audioPlaying) {
+                            audioPlaying = true;
+                            updateAudioUIState(true);
+                            fadeInAudio(audio, 2000);
+                        }
+                    }
+                } else {
+                    if (audioPlaying) {
+                        audio.pause();
+                        audioPlaying = false;
+                        updateAudioUIState(false);
+                    }
+                    if (autoplayEnabled) {
+                         toggleAutoplay();
+                    }
+                    hasAutoStarted = false;
+                }
+            });
+        }, { threshold: 0.3 });
+
+        // ========== MUSIC PLAYER LOGIC ==========
+        const allMusic = [
+            { name: "Palagi", artist: "TJ Monterde", img: "Palagi.jpeg", src: "Palagi.mp3" },
+            { name: "You Got It All", artist: "MYMP", img: "You.jpeg", src: "You Got It All.mp3" },
+            { name: "Ikaw at Ako", artist: "TJ Monterde", img: "Ikaw.jpeg", src: "Ikaw At Ako.mp3" },
+            { name: "Darating Din", artist: "TJ Monterde", img: "Darating.jpeg", src: "Darating Din.mp3" },
+            { name: "Foolish Heart", artist: "Nina", img: "Foolish.jpeg", src: "Foolish Heart.mp3" }
+        ];
+
+        const wrapper = document.querySelector(".music-player-wrapper");
+        const musicImg = document.getElementById("music-img");
+        const musicName = document.getElementById("music-name");
+        const musicArtist = document.getElementById("music-artist");
+        const mainAudio = document.getElementById("main-audio");
+        const playPauseBtn = document.getElementById("play-pause-btn");
+        const progressArea = document.getElementById("progress-area");
+        const progressBar = document.getElementById("progress-bar");
+        const musicList = document.getElementById("music-list");
+
+        let musicIndex = 0;
+
+        window.addEventListener("load", () => {
+            loadMusic(musicIndex);
+            playingSong(); 
+        });
+
+        function loadMusic(indexNumber) {
+            musicName.innerText = allMusic[indexNumber].name;
+            musicArtist.innerText = allMusic[indexNumber].artist;
+            musicImg.src = allMusic[indexNumber].img;
+            musicImg.onerror = function() {
+                this.src = 'https://via.placeholder.com/220x220/8B7355/FFFFFF?text=Album+Art';
+            };
+            mainAudio.src = allMusic[indexNumber].src;
+            document.getElementById('queue-count').innerText = `${allMusic.length} songs`;
+        }
+
+        function playMusic() {
+            wrapper.classList.add("paused");
+            playPauseBtn.classList.remove("fa-play-circle");
+            playPauseBtn.classList.add("fa-pause-circle");
+            document.querySelector(".img-area").classList.add("playing");
+            mainAudio.play();
+        }
+
+        function pauseMusic() {
+            wrapper.classList.remove("paused");
+            playPauseBtn.classList.add("fa-play-circle");
+            playPauseBtn.classList.remove("fa-pause-circle");
+            document.querySelector(".img-area").classList.remove("playing");
+            mainAudio.pause();
+        }
+
+        function playPause() {
+            const isMusicPaused = wrapper.classList.contains("paused");
+            isMusicPaused ? pauseMusic() : playMusic();
+        }
+
+        function nextSong() {
+            musicIndex++;
+            if(musicIndex > allMusic.length - 1){
+                musicIndex = 0;
+            }
+            loadMusic(musicIndex);
+            playMusic();
+            playingSong();
+        }
+
+        function prevSong() {
+            musicIndex--;
+            if(musicIndex < 0){
+                musicIndex = allMusic.length - 1;
+            }
+            loadMusic(musicIndex);
+            playMusic();
+            playingSong();
+        }
+
+        mainAudio.addEventListener("timeupdate", (e) => {
+            const currentTime = e.target.currentTime;
+            const duration = e.target.duration;
+            let progressWidth = (currentTime / duration) * 100;
+            progressBar.style.width = `${progressWidth}%`;
+
+            let musicCurrentTime = wrapper.querySelector("#current-time");
+            let musicDuration = wrapper.querySelector("#max-duration");
+
+            mainAudio.addEventListener("loadeddata", () => {
+                let mainAdDuration = mainAudio.duration;
+                let totalMin = Math.floor(mainAdDuration / 60);
+                let totalSec = Math.floor(mainAdDuration % 60);
+                if(totalSec < 10){ totalSec = `0${totalSec}`; }
+                musicDuration.innerText = `${totalMin}:${totalSec}`;
+            });
+
+            let min = Math.floor(currentTime / 60);
+            let sec = Math.floor(currentTime % 60);
+            if(sec < 10){ sec = `0${sec}`; }
+            musicCurrentTime.innerText = `${min}:${sec}`;
+        });
+
+        progressArea.addEventListener("click", (e) => {
+            let progressWidth = progressArea.clientWidth;
+            let clickedOffsetX = e.offsetX;
+            let songDuration = mainAudio.duration;
+            mainAudio.currentTime = (clickedOffsetX / progressWidth) * songDuration;
+            playMusic();
+        });
+
+        mainAudio.addEventListener("ended", () => {
+            nextSong();
+        });
+
+        function playingSong() {
+            const ulTag = document.getElementById("music-list");
+            ulTag.innerHTML = ""; 
+            for (let i = 0; i < allMusic.length; i++) {
+                let liTag = `
+                    <li li-index="${i}" onclick="clicked(this)">
+                        <img src="${allMusic[i].img}" class="row-img" alt="${allMusic[i].name}" onerror="this.src='https://via.placeholder.com/50x50/8B7355/FFFFFF?text=Album'">
+                        <div class="row-details">
+                            <span class="list-name">${allMusic[i].name}</span>
+                            <span class="list-artist">${allMusic[i].artist}</span>
+                        </div>
+                        <span id="${allMusic[i].src}" class="audio-duration">Play</span> 
+                    </li>`;
+                ulTag.insertAdjacentHTML("beforeend", liTag);
+            }
+            
+            const allLiTags = ulTag.querySelectorAll("li");
+            if(allLiTags[musicIndex]) {
+                allLiTags[musicIndex].classList.add("playing");
+                const durationSpan = allLiTags[musicIndex].querySelector(".audio-duration");
+                durationSpan.innerText = "Playing";
+                durationSpan.style.color = "var(--color-accent)";
+            }
+        }
+
+        function clicked(element) {
+            let getLiIndex = element.getAttribute("li-index");
+            musicIndex = parseInt(getLiIndex);
+            loadMusic(musicIndex);
+            playMusic();
+            playingSong();
+        }
+
+        // ========== NEW ENERGY NAV INDICATOR LOGIC ==========
+        function updateNavIndicator() {
+            const activeLink = document.querySelector('.nav-link.active');
+            const indicator = document.querySelector('.nav-indicator');
+            
+            if (activeLink && indicator) {
+                // Check if we are on mobile (stacked links) or desktop (row)
+                const isMobile = window.innerWidth <= 768;
+                
+                indicator.style.width = `${activeLink.offsetWidth}px`;
+                indicator.style.height = `${activeLink.offsetHeight}px`;
+                indicator.style.left = `${activeLink.offsetLeft}px`;
+                indicator.style.top = `${activeLink.offsetTop}px`;
+            }
+        }
+
+        function enterSite() {
+            document.getElementById('home').classList.add('exited');
+            setTimeout(() => {
+                document.getElementById('mainContent').classList.add('active');
+                document.getElementById('mainNav').classList.add('active');
+                // Initialize indicator once nav is visible
+                setTimeout(() => {
+                    updateNavIndicator();
+                    document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+                    const momentsSection = document.getElementById('momentsSection');
+                    if (momentsSection) momentsObserver.observe(momentsSection);
+                }, 100);
+            }, 500);
+        }
+
+        function goHome() {
+            document.getElementById('home').classList.remove('exited');
+            document.getElementById('mainContent').classList.remove('active');
+            document.getElementById('mainNav').classList.remove('active');
+            closeMobileMenu();
+            
+            if (autoplayEnabled) toggleAutoplay();
+            
+            const audio = document.getElementById('momentsAudio');
+            if (audioPlaying) {
+                audio.pause();
+                audioPlaying = false;
+                updateAudioUIState(false);
+            }
+
+             if(wrapper.classList.contains("paused")){
+                pauseMusic();
+            }
+            hasAutoStarted = false;
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            event.currentTarget.classList.add('active');
+            
+            // Update Energy Pill Position
+            updateNavIndicator();
+
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const audio = document.getElementById('momentsAudio');
+            
+            if (pageId !== 'squad') {
+                if (audioPlaying) {
+                    audio.pause();
+                    audioPlaying = false;
+                    updateAudioUIState(false);
+                }
+                if (autoplayEnabled) toggleAutoplay();
+                hasAutoStarted = false;
+            } else {
+                setTimeout(() => {
+                    const momentsSection = document.getElementById('momentsSection');
+                    if (momentsSection) {
+                        momentsObserver.observe(momentsSection);
+                    }
+                }, 100);
+            }
+            
+            if (pageId !== 'playlist') {
+                if(wrapper.classList.contains("paused")){
+                    pauseMusic();
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initMomentsCarousel();
+            document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+            
+            // Ensure indicator updates on window resize for responsive smoothness
+            window.addEventListener('resize', () => {
+                updateCarousel();
+                updateNavIndicator();
+            });
+
+            document.getElementById('imageModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeImageModal();
+                }
+            });
+            
+            // Initialize the navigation indicator on page load
+            setTimeout(updateNavIndicator, 100);
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+
+            if (document.getElementById('playlist').classList.contains('active')) {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    playPause(); 
+                } else if (e.code === 'ArrowRight') {
+                    nextSong();
+                } else if (e.code === 'ArrowLeft') {
+                    prevSong();
+                }
+            }
+            
+            if (document.getElementById('squad').classList.contains('active')) {
+                if (e.code === 'ArrowRight') {
+                    nextMoment();
+                } else if (e.code === 'ArrowLeft') {
+                    previousMoment();
+                }
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            const navLinks = document.getElementById('navLinks');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            if (navLinks && menuBtn && !navLinks.contains(e.target) && !menuBtn.contains(e.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
